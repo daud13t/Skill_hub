@@ -1,4 +1,3 @@
-// src/auth/AuthContext.jsx
 import { createContext, useContext, useState } from 'react';
 import api from '../api/axios';
 
