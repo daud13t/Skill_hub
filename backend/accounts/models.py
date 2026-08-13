@@ -6,9 +6,9 @@ class Profile(models.Model):
       user = models.OneToOneField(User, on_delete=models.CASCADE)
       bio = models.TextField(blank=True)
       current_mode = models.CharField(
-            max_length=10,
-            choices = [("Student","student"),("Tutor","tutor")],
-            default = 'student'
-            )
+      max_length=10,
+      choices=[("student", "Student"), ("tutor", "Tutor")],
+      default='student'
+      )
       def __str__(self):
             return self.user.username
