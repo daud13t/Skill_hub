@@ -1,3 +1,4 @@
+// src/skills/SkillFeed.jsx
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 
@@ -12,15 +13,15 @@ export default function SkillFeed({ onSelect }) {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+
 
   return (
-    <div>
-      <h2>Skills</h2>
+    <div className="skill-grid fade-in">
       {skills.map((skill) => (
-        <div key={skill.id} onClick={() => onSelect(skill.id)} style={{ cursor: 'pointer' }}>
-          <h3>{skill.title}</h3>
-          <p>{skill.category} · by {skill.tutor_username} · {skill.view_count} views</p>
+        <div key={skill.id} className="skill-card" onClick={() => onSelect(skill.id)}>
+          <span className="skill-card-category">{skill.category}</span>
+          <h3 className="skill-card-title">{skill.title}</h3>
+          <p className="skill-card-meta">Taught by {skill.tutor_username}. {skill.view_count} views.</p>
         </div>
       ))}
     </div>

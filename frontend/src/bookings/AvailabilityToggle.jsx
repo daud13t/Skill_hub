@@ -14,8 +14,8 @@ export default function AvailabilityToggle() {
   };
 
   return (
-    <button onClick={toggle}>
-      {isAvailable ? 'Available ✓ (click to turn off)' : 'Not Available (click to turn on)'}
+    <button className={`availability-pill ${isAvailable ? 'is-on' : ''}`} onClick={toggle}>
+      {isAvailable ? 'Available' : 'Not available'}
     </button>
   );
 }

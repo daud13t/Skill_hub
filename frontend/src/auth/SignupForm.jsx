@@ -1,19 +1,21 @@
+// src/auth/SignupForm.jsx
 import { useState } from 'react';
-import { useAuth } from './AuthContext';
+import api from '../api/axios';
 
-export default function LoginForm({ onSwitchToSignup }) {
+export default function SignupForm({ onSignedUp, onSwitchToLogin }) {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      await login(username, password);
+      await api.post('/accounts/register/', { username, email, password });
+      onSignedUp();
     } catch (err) {
-      setError('Login failed. Check your username and password.');
+      setError('Signup failed. Username or email may already be taken.');
     }
   };
 
@@ -23,10 +25,10 @@ export default function LoginForm({ onSwitchToSignup }) {
         <div className="auth-hero-content">
           <span className="auth-hero-eyebrow">SkillsHub</span>
           <h1 className="auth-hero-headline">
-            Someone out there<br />already knows<br />what you want to learn.
+            Teach what you know.<br />Learn what you don't.
           </h1>
           <p className="auth-hero-sub">
-            Real people teaching real skills. guitar, code, sourdough, Spanish. Book a time, show up, learn something.
+            One account, two sides. Switch between teaching and learning whenever you want.
           </p>
         </div>
         <div className="auth-hero-orbit">
@@ -39,19 +41,23 @@ export default function LoginForm({ onSwitchToSignup }) {
 
       <div className="auth-panel">
         <div className="auth-panel-inner">
-          <h2>Welcome back</h2>
+          <h2>Create your account</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-field">
               <label>Username</label>
-              <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+              <input value={username} onChange={(e) => setUsername(e.target.value)} />
+            </div>
+            <div className="form-field">
+              <label>Email</label>
+              <input value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="form-field">
               <label>Password</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             {error && <p className="error-text">{error}</p>}
-            <button type="submit" className="btn-primary" style={{ width: '100%' }}>Log In</button>
-            <p className="link-text" onClick={onSwitchToSignup}>Don't have an account? Sign up</p>
+            <button type="submit" className="btn-primary" style={{ width: '100%' }}>Sign Up</button>
+            <p className="link-text" onClick={onSwitchToLogin}>Already have an account? Log in</p>
           </form>
         </div>
       </div>
