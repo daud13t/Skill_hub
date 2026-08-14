@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
       user = models.OneToOneField(User, on_delete=models.CASCADE)
       bio = models.TextField(blank=True)
+      contact_link = models.URLField(blank=True)
       current_mode = models.CharField(
       max_length=10,
       choices=[("student", "Student"), ("tutor", "Tutor")],

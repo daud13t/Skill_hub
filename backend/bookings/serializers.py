@@ -20,3 +20,8 @@ class BookingCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = ['skill', 'requested_datetime']
+
+class BookingApproveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = []

@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from django.db import models
 from .models import Availability, Booking
-from .serializers import AvailabilitySerializer, BookingListSerializer, BookingCreateSerializer
+from .serializers import AvailabilitySerializer,BookingListSerializer,BookingCreateSerializer,BookingApproveSerializer
 # Create your views here.
 
 class AvailabilityView(generics.RetrieveUpdateAPIView):
@@ -31,3 +31,15 @@ class BookingListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
+
+
+class BookingApproveView(generics.UpdateAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingApproveSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Booking.objects.filter(skill__tutor=self.request.user, status='pending')
+
+    def perform_update(self, serializer):
+        serializer.save(status='confirmed')

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
+import { useAuth } from '../auth/AuthContext';
 
 export default function MyBookings() {
+  const { user } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -10,6 +12,8 @@ export default function MyBookings() {
       .then((res) => setBookings(res.data))
       .finally(() => setLoading(false));
   }, []);
+
+  if (loading) return null;
 
   const groups = {
     pending: bookings.filter((b) => b.status === 'pending'),
@@ -21,6 +25,13 @@ export default function MyBookings() {
     pending: 'Waiting on confirmation',
     confirmed: 'Confirmed',
     cancelled: 'Cancelled',
+  };
+
+  const approve = async (bookingId) => {
+    await api.patch(`/bookings/${bookingId}/approve/`);
+    setBookings((prev) =>
+      prev.map((b) => (b.id === bookingId ? { ...b, status: 'confirmed' } : b))
+    );
   };
 
   return (
@@ -43,6 +54,7 @@ export default function MyBookings() {
             <div className="bookings-list">
               {items.map((b) => {
                 const date = new Date(b.requested_datetime);
+                const isMyOwnBooking = b.student_username === user.username;
                 return (
                   <div key={b.id} className={`booking-row status-border-${b.status}`}>
                     <div className="booking-date-block">
@@ -51,11 +63,18 @@ export default function MyBookings() {
                     </div>
                     <div className="booking-info">
                       <p className="booking-skill">{b.skill_title}</p>
-                      <p className="booking-with">with {b.student_username}</p>
+                      <p className="booking-with">
+                        {isMyOwnBooking ? 'Your booking request' : `Student: ${b.student_username}`}
+                      </p>
                     </div>
                     <div className="booking-time">
                       {date.toLocaleTimeString('default', { hour: 'numeric', minute: '2-digit' })}
                     </div>
+                    {status === 'pending' && !isMyOwnBooking && (
+                      <button className="btn-primary" style={{ padding: '8px 16px', fontSize: 13 }} onClick={() => approve(b.id)}>
+                        Approve
+                      </button>
+                    )}
                     <span className={`status-badge status-${b.status}`}>{b.status}</span>
                   </div>
                 );

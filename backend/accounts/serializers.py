@@ -21,4 +21,4 @@ class RegisterSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
       class Meta:
             model = Profile
-            fields = ['bio','current_mode']
+            fields = ['bio','contact_link','current_mode']

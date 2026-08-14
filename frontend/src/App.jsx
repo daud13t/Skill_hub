@@ -8,6 +8,7 @@ import SkillDetail from './skills/SkillDetail';
 import SkillForm from './skills/SkillForm';
 import MyBookings from './bookings/MyBookings';
 import AvailabilityToggle from './bookings/AvailabilityToggle';
+import ProfileForm from './auth/ProfileForm';
 import api from './api/axios';
 
 function AppContent() {
@@ -42,6 +43,7 @@ function AppContent() {
           <button className={`nav-link ${view === 'feed' ? 'active' : ''}`} onClick={() => setView('feed')}>Feed</button>
           {mode === 'tutor' && <button className={`nav-link ${view === 'post' ? 'active' : ''}`} onClick={() => setView('post')}>Post a Skill</button>}
           <button className={`nav-link ${view === 'bookings' ? 'active' : ''}`} onClick={() => setView('bookings')}>My Bookings</button>
+          <button className={`nav-link ${view === 'profile' ? 'active' : ''}`} onClick={() => setView('profile')}>My Profile</button>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <ModeToggle onModeChange={setMode} />
@@ -59,6 +61,7 @@ function AppContent() {
       )}
       {view === 'post' && mode === 'tutor' && <SkillForm onCreated={() => setView('feed')} />}
       {view === 'bookings' && <MyBookings />}
+      {view === 'profile' && <ProfileForm />}
     </div>
   );
 }
