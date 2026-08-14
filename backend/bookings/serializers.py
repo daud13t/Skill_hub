@@ -7,7 +7,6 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         model = Availability
         fields = ['is_available']
 
-
 class BookingListSerializer(serializers.ModelSerializer):
     student_username = serializers.CharField(source='student.username', read_only=True)
     skill_title = serializers.CharField(source='skill.title', read_only=True)
