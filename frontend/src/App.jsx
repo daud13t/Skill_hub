@@ -9,6 +9,7 @@ import SkillForm from './skills/SkillForm';
 import MyBookings from './bookings/MyBookings';
 import AvailabilityToggle from './bookings/AvailabilityToggle';
 import ProfileForm from './auth/ProfileForm';
+import TutorProfile from './skills/TutorProfile';
 import api from './api/axios';
 
 function AppContent() {
@@ -17,12 +18,21 @@ function AppContent() {
   const [view, setView] = useState('feed');
   const [selectedSkillId, setSelectedSkillId] = useState(null);
   const [mode, setMode] = useState('student');
+  const [profileUserId, setProfileUserId] = useState(null);
 
   useEffect(() => {
     if (user) {
       api.get('/accounts/profile/').then((res) => setMode(res.data.current_mode));
     }
   }, [user]);
+
+  if (checkingAuth) {
+    return (
+      <div style={{ padding: 48, textAlign: 'center', color: 'var(--gray)' }}>
+        Loading.
+      </div>
+    );
+  }
 
   if (!user) {
     return authView === 'login' ? (
@@ -40,10 +50,10 @@ function AppContent() {
       <nav className="nav-bar">
         <span className="nav-brand">SkillsHub</span>
         <div className="nav-links">
-          <button className={`nav-link ${view === 'feed' ? 'active' : ''}`} onClick={() => setView('feed')}>Feed</button>
-          {mode === 'tutor' && <button className={`nav-link ${view === 'post' ? 'active' : ''}`} onClick={() => setView('post')}>Post a Skill</button>}
-          <button className={`nav-link ${view === 'bookings' ? 'active' : ''}`} onClick={() => setView('bookings')}>My Bookings</button>
-          <button className={`nav-link ${view === 'profile' ? 'active' : ''}`} onClick={() => setView('profile')}>My Profile</button>
+          <button className={`nav-link ${view === 'feed' ? 'active' : ''}`} onClick={() => { setView('feed'); setProfileUserId(null); }}>Feed</button>
+          {mode === 'tutor' && <button className={`nav-link ${view === 'post' ? 'active' : ''}`} onClick={() => { setView('post'); setProfileUserId(null); }}>Post a Skill</button>}
+          <button className={`nav-link ${view === 'bookings' ? 'active' : ''}`} onClick={() => { setView('bookings'); setProfileUserId(null); }}>My Bookings</button>
+          <button className={`nav-link ${view === 'profile' ? 'active' : ''}`} onClick={() => { setView('profile'); setProfileUserId(null); }}>My Profile</button>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <ModeToggle onModeChange={setMode} />
@@ -53,15 +63,34 @@ function AppContent() {
         </div>
       </nav>
 
-      {view === 'feed' && !selectedSkillId && (
-        <SkillFeed onSelect={(id) => setSelectedSkillId(id)} />
+      {profileUserId && (
+        <TutorProfile
+          userId={profileUserId}
+          onBack={() => setProfileUserId(null)}
+          onSelectSkill={(skillId) => {
+            setProfileUserId(null);
+            setView('feed');
+            setSelectedSkillId(skillId);
+          }}
+        />
       )}
-      {view === 'feed' && selectedSkillId && (
-        <SkillDetail skillId={selectedSkillId} onBack={() => setSelectedSkillId(null)} />
+
+      {!profileUserId && view === 'feed' && !selectedSkillId && (
+        <SkillFeed
+          onSelect={(id) => setSelectedSkillId(id)}
+          onSelectTutor={(id) => setProfileUserId(id)}
+        />
       )}
-      {view === 'post' && mode === 'tutor' && <SkillForm onCreated={() => setView('feed')} />}
-      {view === 'bookings' && <MyBookings />}
-      {view === 'profile' && <ProfileForm />}
+      {!profileUserId && view === 'feed' && selectedSkillId && (
+        <SkillDetail
+          skillId={selectedSkillId}
+          onBack={() => setSelectedSkillId(null)}
+          onSelectTutor={(id) => setProfileUserId(id)}
+        />
+      )}
+      {!profileUserId && view === 'post' && mode === 'tutor' && <SkillForm onCreated={() => setView('feed')} />}
+      {!profileUserId && view === 'bookings' && <MyBookings />}
+      {!profileUserId && view === 'profile' && <ProfileForm />}
     </div>
   );
 }
